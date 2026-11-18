@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#3458c8">
+<title>Mis Citas Médicas</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+:root{--acc:#3458c8;--acc-l:#e8edfb;--red:#e45555;--bg:#f3f5fc;--card:#fff;--txt:#1d2433;--mut:#6b7385;--line:#e0e5f2;--ok:#2e8b57;--tel:#8a4fd1;--tel-l:#f1e9fb}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px;padding-bottom:110px}
+header{background:var(--acc);color:#fff;padding:calc(16px + env(safe-area-inset-top)) 18px 60px}
+header h1{margin:0;font-size:23px}
+header p{margin:3px 0 0;opacity:.9;font-size:14px}
+.wrap{max-width:560px;margin:0 auto;padding:0 14px}
+.hero{background:var(--card);border-radius:20px;padding:18px;margin-top:-44px;box-shadow:0 6px 24px rgba(52,88,200,.18)}
+.hero .lbl{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);font-weight:800}
+.hero .sp{font-size:25px;font-weight:800;margin:6px 0 2px}
+.hero .when{font-size:16px;font-weight:600}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.badge{display:inline-block;border-radius:999px;padding:5px 12px;font-weight:800;font-size:14px;background:var(--acc);color:#fff}
+.badge.today{background:var(--red)}
+.badge.mode{background:var(--acc-l);color:var(--acc)}
+.badge.mode.tel{background:var(--tel-l);color:var(--tel)}
+.line{font-size:15px;margin:6px 0;display:flex;gap:8px}
+.line b{flex:none}
+.tip{background:var(--tel-l);color:var(--tel);border-radius:12px;padding:10px 12px;font-size:14px;font-weight:600;margin-top:8px}
+.docs{margin-top:10px;border-top:1px solid var(--line);padding-top:8px}
+.docs .t{font-size:13px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.doc{display:flex;align-items:center;gap:10px;padding:7px 0;cursor:pointer;font-size:15px}
+.doc .box{width:24px;height:24px;border:2px solid var(--acc);border-radius:7px;display:grid;place-items:center;flex:none;font-size:15px;color:#fff}
+.doc.ok .box{background:var(--ok);border-color:var(--ok)}
+.doc.ok span{color:var(--mut);text-decoration:line-through}
+.notice{margin-top:14px;background:#fff6e0;border:1px solid #ffe2a0;border-radius:14px;padding:12px 14px;font-size:14px;display:flex;gap:10px;align-items:center;justify-content:space-between}
+h2{font-size:14px;color:var(--mut);margin:24px 4px 8px;text-transform:uppercase;letter-spacing:.06em}
+.item{background:var(--card);border-radius:16px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;border:1px solid var(--line);cursor:pointer}
+.item.soon{border-color:var(--red)}
+.datebox{width:56px;flex:none;text-align:center;background:var(--acc-l);border-radius:12px;padding:6px 0}
+.datebox b{display:block;font-size:21px;color:var(--acc);line-height:1.1}
+.datebox span{font-size:11px;text-transform:uppercase;color:var(--mut);font-weight:800}
+.item .info{flex:1;min-width:0}
+.item .n{font-weight:700;font-size:16px}
+.item .d{font-size:13px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .cd{flex:none;font-size:13px;font-weight:800;color:var(--acc);text-align:right}
+.item.past{opacity:.6}
+.empty{text-align:center;color:var(--mut);padding:26px 10px}
+button.primary{background:var(--acc);color:#fff;border:0;border-radius:12px;padding:12px 16px;font-weight:700;font-size:15px;cursor:pointer}
+button.ghost,a.ghost{display:block;text-align:center;text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 14px;font-size:15px;cursor:pointer;color:var(--txt);width:100%}
+button.danger{background:#fff;border:1px solid #f3c0c0;color:var(--red)}
+.fab{position:fixed;right:20px;bottom:calc(24px + env(safe-area-inset-bottom));width:62px;height:62px;border-radius:50%;background:var(--acc);color:#fff;font-size:34px;border:0;box-shadow:0 8px 20px rgba(52,88,200,.4);cursor:pointer}
+details{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+details summary{cursor:pointer;font-weight:700;color:var(--mut)}
+details .box2{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}
+.small{font-size:13px;color:var(--mut);line-height:1.45;margin:0}
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:flex-end;justify-content:center;z-index:10}
+.sheet-bg.open{display:flex}
+.sheet{background:#fff;width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom))}
+.sheet h3{margin:0 0 6px}
+label.f{display:block;font-size:13px;color:var(--mut);font-weight:700;margin:12px 0 5px}
+input,textarea,select{width:100%;font:inherit;font-size:16px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fbfcff;color:var(--txt)}
+.toggles{display:flex;gap:8px}
+.toggles label{flex:1;position:relative;cursor:pointer}
+.toggles input{position:absolute;opacity:0;width:0;height:0}
+.toggles span{display:block;text-align:center;border:2px solid var(--line);border-radius:12px;padding:11px 4px;font-weight:700;font-size:15px}
+.toggles input:checked+span{border-color:var(--acc);background:var(--acc-l);color:var(--acc)}
+.quick{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.quick button{border:1px dashed var(--acc);background:#fff;color:var(--acc);border-radius:999px;padding:5px 10px;font-size:13px;font-weight:600;cursor:pointer}
+.btns{display:flex;gap:8px;margin-top:18px}.btns>*{flex:1}
+.stack{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.err{color:var(--red);font-size:14px;min-height:18px;margin-top:8px;font-weight:600}
+.toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:#1d2433;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:.2s;pointer-events:none;z-index:20}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>🩺 Mis Citas Médicas</h1><p id="hoy"></p></div></header>
+
+<div class="wrap">
+  <section class="hero" id="hero"></section>
+  <div id="notice"></div>
+  <h2>Próximas citas</h2>
+  <div id="list"></div>
+
+  <details id="pastBox"><summary id="pastSum">Citas pasadas</summary><div class="box2" id="pastList"></div></details>
+
+  <details>
+    <summary>🔔 Avisos</summary>
+    <div class="box2">
+      <div id="notifState"></div>
+      <div class="row"><span>Aviso el día antes a las</span><input type="time" id="eveTime"></div>
+      <div class="row"><span>Aviso el mismo día</span>
+        <select id="hoursBefore"><option value="1">1 hora antes</option><option value="2">2 horas antes</option><option value="3">3 horas antes</option><option value="4">4 horas antes</option></select></div>
+      <p class="small">Con la app cerrada, Android decide cuándo puede comprobarlo y el aviso puede retrasarse. Para una alarma segura, abre cada cita y usa los botones de Google Calendar.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Copia de seguridad</summary>
+    <div class="box2">
+      <p class="small">Tus citas se guardan solo en este móvil. Copia este texto y guárdalo (por ejemplo, envíatelo por correo).</p>
+      <button class="ghost" id="btnExport">📋 Copiar copia de seguridad</button>
+      <textarea id="importTxt" rows="3" placeholder="Pega aquí una copia para restaurarla"></textarea>
+      <button class="ghost" id="btnImport">⤴️ Restaurar (sustituye las citas actuales)</button>
+    </div>
+  </details>
+</div>
+
+<button class="fab" id="fab" aria-label="Añadir cita">+</button>
+
+<!-- Formulario -->
+<div class="sheet-bg" id="formSheet">
+  <form class="sheet" id="form">
+    <h3 id="formTitle">Nueva cita</h3>
+    <div class="row">
+      <div><label class="f" for="fDate">Fecha</label><input id="fDate" type="date"></div>
+      <div><label class="f" for="fTime">Hora</label><input id="fTime" type="time"></div>
+    </div>
+    <label class="f" for="fSpec">Especialidad</label>
+    <input id="fSpec" list="specs" autocomplete="off" placeholder="Ej.: Cardiología" maxlength="50">
+    <datalist id="specs">
+      <option>Medicina de familia</option><option>Enfermería</option><option>Análisis de sangre</option><option>Cardiología</option>
+      <option>Nefrología</option><option>Neurología</option><option>Endocrinología</option><option>Digestivo</option>
+      <option>Neumología</option><option>Urología</option><option>Traumatología</option><option>Reumatología</option>
+      <option>Oftalmología</option><option>Otorrinolaringología</option><option>Dermatología</option><option>Ginecología</option>
+      <option>Oncología</option><option>Hematología</option><option>Radiología / pruebas de imagen</option><option>Rehabilitación</option>
+      <option>Psiquiatría</option><option>Odontología</option>
+    </datalist>
+    <label class="f" for="fDoctor">Médico/a (opcional)</label>
+    <input id="fDoctor" autocomplete="off" placeholder="Ej.: Dra. López" maxlength="50">
+    <label class="f">Tipo de cita</label>
+    <div class="toggles">
+      <label><input type="radio" name="fMode" value="presencial" checked><span>🏥 Presencial</span></label>
+      <label><input type="radio" name="fMode" value="telefono"><span>📞 Me llaman</span></label>
+    </div>
+    <label class="f" for="fPlace" id="fPlaceLbl">Hospital o ambulatorio</label>
+    <input id="fPlace" autocomplete="off" placeholder="Ej.: Hospital La Paz, consultas externas, planta 2, consulta 14" maxlength="120">
+    <label class="f" for="fDocs">Documentación que debo llevar (una por línea)</label>
+    <textarea id="fDocs" rows="3" placeholder="Ej.: Tarjeta sanitaria"></textarea>
+    <div class="quick" id="quick">
+      <button type="button">Tarjeta sanitaria</button><button type="button">DNI</button><button type="button">Informes anteriores</button>
+      <button type="button">Resultados de análisis</button><button type="button">Lista de medicación</button><button type="button">Volante / petición</button>
+    </div>
+    <label class="f" for="fNotes">Notas (opcional)</label>
+    <input id="fNotes" autocomplete="off" placeholder="Ej.: ir en ayunas, llevar muestra de orina…" maxlength="150">
+    <div class="err" id="fErr"></div>
+    <div class="btns">
+      <button type="button" class="ghost" id="fCancel">Cancelar</button>
+      <button type="submit" class="primary">Guardar</button>
+    </div>
+  </form>
+</div>
+
+<!-- Detalle -->
+<div class="sheet-bg" id="detSheet"><div class="sheet" id="det"></div></div>
+
+<!-- Confirmación -->
+<div class="sheet-bg" id="askSheet">
+  <div class="sheet">
+    <h3 id="askText"></h3>
+    <div class="btns"><button class="ghost" id="askNo">Cancelar</button><button class="primary" id="askYes" style="background:var(--red)">Sí, borrar</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="db.js"></script>
+<script>
+const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+const MES_C = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+let appts = [], settings = {...DEFAULT_SETTINGS}, editingId = null, detailId = null, swReg = null;
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+function toast(t){ const el=$("toast"); el.textContent=t; el.classList.add("show"); setTimeout(()=>el.classList.remove("show"),2000); }
+function ask(text){ return new Promise((res)=>{ $("askText").textContent=text; $("askSheet").classList.add("open");
+  $("askYes").onclick=()=>{ $("askSheet").classList.remove("open"); res(true); };
+  $("askNo").onclick=()=>{ $("askSheet").classList.remove("open"); res(false); }; }); }
+
+function fmtLong(a){
+  const s = apptDate(a).toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long"});
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+function countdown(a, now = new Date()){
+  const n = daysBetween(now, apptDate(a));
+  if (n === 0) return apptDate(a) < now ? "Hoy (ya empezó)" : "¡Hoy!";
+  if (n === 1) return "Mañana";
+  if (n < 7) return `Faltan ${n} días`;
+  if (n < 14) return "En 1 semana";
+  if (n < 60) return `En ${Math.floor(n/7)} semanas`;
+  return `En ${Math.round(n/30)} meses`;
+}
+const sortUp = (a,b) => apptDate(a) - apptDate(b);
+const modeBadge = (a) => a.mode === "telefono" ? `<span class="badge mode tel">📞 Te llamarán</span>` : `<span class="badge mode">🏥 Presencial</span>`;
+
+function docsHtml(a){
+  const docs = (a.docs||[]).filter(d=>d.text);
+  if (!docs.length) return "";
+  return `<div class="docs"><div class="t">📄 Llevar (${docs.filter(d=>d.ready).length}/${docs.length} preparado)</div>
+    ${docs.map((d,i)=>`<div class="doc ${d.ready?"ok":""}" data-doc="${a.id}:${i}"><div class="box">${d.ready?"✓":""}</div><span>${esc(d.text)}</span></div>`).join("")}</div>`;
+}
+function infoHtml(a){
+  return `${a.mode==="telefono"
+      ? `<div class="tip">📞 Te llamarán sobre las ${esc(a.time)}. Ten el móvil cerca y con sonido.</div>`
+      : (a.place ? `<div class="line"><b>📍</b><span>${esc(a.place)}</span></div>` : "")}
+    ${a.notes ? `<div class="line"><b>📝</b><span>${esc(a.notes)}</span></div>` : ""}
+    ${docsHtml(a)}`;
+}
+
+function render(){
+  const now = new Date();
+  const ds = now.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  $("hoy").textContent = ds.charAt(0).toUpperCase() + ds.slice(1);
+  const up = appts.filter(a=>isUpcoming(a,now)).sort(sortUp);
+  const past = appts.filter(a=>!isUpcoming(a,now)).sort((a,b)=>sortUp(b,a));
+  const hero = $("hero");
+  if (!up.length){
+    hero.innerHTML = `<div class="lbl">Próxima cita</div><div class="sp">No tienes citas pendientes</div><div class="small" style="font-size:15px">Pulsa <b>+</b> para añadir una.</div>`;
+  } else {
+    const a = up[0], n = daysBetween(now, apptDate(a));
+    hero.innerHTML = `<div class="lbl">Tu cita más cercana</div>
+      <div class="sp">${esc(a.specialty)}</div>
+      ${a.doctor?`<div class="small" style="font-size:15px">${esc(a.doctor)}</div>`:""}
+      <div class="when" style="margin-top:6px">${fmtLong(a)} · ${esc(a.time)} h</div>
+      <div class="badges"><span class="badge ${n<=1?"today":""}">${countdown(a,now)}</span>${modeBadge(a)}</div>
+      ${infoHtml(a)}
+      <button class="ghost" data-open="${a.id}" style="margin-top:12px">Ver detalles y alarmas</button>`;
+  }
+  const rest = up.slice(1);
+  $("list").innerHTML = up.length <= 1
+    ? `<div class="empty">${up.length ? "No hay más citas pendientes." : "Aún no hay citas."}</div>`
+    : rest.map(a=>itemHtml(a,now)).join("");
+  $("pastBox").style.display = past.length ? "" : "none";
+  $("pastSum").textContent = `Citas pasadas (${past.length})`;
+  $("pastList").innerHTML = past.map(a=>itemHtml(a,now,true)).join("");
+  renderNotif();
+}
+function itemHtml(a, now, isPast){
+  const d = apptDate(a), n = daysBetween(now, d);
+  return `<div class="item ${isPast?"past":""} ${!isPast&&n<=1?"soon":""}" data-open="${a.id}">
+    <div class="datebox"><b>${d.getDate()}</b><span>${MES_C[d.getMonth()]}${d.getFullYear()!==now.getFullYear()?" "+String(d.getFullYear()).slice(2):""}</span></div>
+    <div class="info"><div class="n">${esc(a.specialty)}</div>
+      <div class="d">${esc(a.time)} · ${a.mode==="telefono"?"📞 Te llaman":"🏥 "+esc(a.place||"Presencial")}</div></div>
+    ${isPast?"":`<div class="cd">${countdown(a,now)}</div>`}</div>`;
+}
+function renderNotif(){
+  $("eveTime").value = settings.eveTime; $("hoursBefore").value = String(settings.hoursBefore);
+  let st;
+  if (!("Notification" in window)) st = `<p class="small">Este navegador no permite avisos. Usa los botones de Google Calendar de cada cita.</p>`;
+  else if (Notification.permission === "granted") st = `<p class="small">✅ Avisos activados.</p>`;
+  else if (Notification.permission === "denied") st = `<p class="small">🔕 Avisos bloqueados. Actívalos en Ajustes de Android › Aplicaciones › Mis Citas (o Chrome) › Notificaciones.</p>`;
+  else st = `<button class="primary" data-perm="1">🔔 Activar avisos</button>`;
+  $("notifState").innerHTML = st;
+  $("notice").innerHTML = ("Notification" in window && Notification.permission === "default" && appts.length)
+    ? `<div class="notice"><span>🔔 Activa los avisos para que te recuerde cada cita el día antes y el mismo día.</span><button class="primary" data-perm="1">Activar</button></div>` : "";
+}
+
+// ---------- Detalle ----------
+function gcal(params){ return "https://calendar.google.com/calendar/render?" + new URLSearchParams({action:"TEMPLATE", ...params}).toString(); }
+const f2 = (n) => String(n).padStart(2,"0");
+const fmtCal = (x) => `${x.getFullYear()}${f2(x.getMonth()+1)}${f2(x.getDate())}T${f2(x.getHours())}${f2(x.getMinutes())}00`;
+function tz(){ try { return Intl.DateTimeFormat().resolvedOptions().timeZone || "Europe/Madrid"; } catch(e){ return "Europe/Madrid"; } }
+function calDetails(a){
+  const docs = (a.docs||[]).filter(d=>d.text).map(d=>"- "+d.text).join("\n");
+  return [modeText(a), a.doctor, a.notes, docs ? "Llevar:\n"+docs : ""].filter(Boolean).join("\n") + "\n\nCreado desde Mis Citas";
+}
+function calAppt(a){
+  const s = apptDate(a), e = new Date(s.getTime()+60*60000);
+  return gcal({text:`🩺 ${apptTitle(a)}${a.mode==="telefono"?" (te llaman)":""}`, dates:`${fmtCal(s)}/${fmtCal(e)}`, ctz:tz(), location:a.mode==="telefono"?"":(a.place||""), details:calDetails(a)});
+}
+function calEve(a){
+  const s = eveTrigger(a, settings), e = new Date(s.getTime()+10*60000);
+  return gcal({text:`🔔 Mañana: ${a.specialty} a las ${a.time}`, dates:`${fmtCal(s)}/${fmtCal(e)}`, ctz:tz(), details:calDetails(a)});
+}
+function openDetail(id){
+  const a = appts.find(x=>x.id===id); if (!a) return;
+  detailId = id; const now = new Date(), up = isUpcoming(a, now);
+  $("det").innerHTML = `<div class="lbl" style="font-size:12px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.08em">${up?"Cita":"Cita pasada"}</div>
+    <h3 style="font-size:23px;margin:4px 0">${esc(a.specialty)}</h3>
+    ${a.doctor?`<div class="small" style="font-size:15px">${esc(a.doctor)}</div>`:""}
+    <div class="when" style="margin-top:6px;font-weight:600">${fmtLong(a)} de ${apptDate(a).getFullYear()} · ${esc(a.time)} h</div>
+    <div class="badges">${up?`<span class="badge ${daysBetween(now,apptDate(a))<=1?"today":""}">${countdown(a,now)}</span>`:""}${modeBadge(a)}</div>
+    ${infoHtml(a)}
+    <div class="stack">
+      ${up?`<a class="ghost" href="${calAppt(a)}" target="_blank" rel="noopener">📅 Añadir la cita a Google Calendar</a>
+      ${eveTrigger(a,settings) > now ? `<a class="ghost" href="${calEve(a)}" target="_blank" rel="noopener">🔔 Alarma el día antes (${esc(settings.eveTime)}) en Google Calendar</a>`:""}`:""}
+      <div class="btns" style="margin-top:0"><button class="ghost" data-edit="${a.id}">✏️ Editar</button><button class="ghost danger" data-del="${a.id}">🗑️ Borrar</button></div>
+      <button class="primary" data-close="1">Cerrar</button>
+    </div>`;
+  $("detSheet").classList.add("open");
+}
+
+// ---------- Formulario ----------
+function openForm(a){
+  editingId = a ? a.id : null;
+  $("formTitle").textContent = a ? "Editar cita" : "Nueva cita";
+  $("fDate").value = a ? a.date : ""; $("fTime").value = a ? a.time : "";
+  $("fSpec").value = a ? a.specialty : ""; $("fDoctor").value = a ? (a.doctor||"") : "";
+  document.querySelector(`input[name=fMode][value=${a ? a.mode : "presencial"}]`).checked = true;
+  $("fPlace").value = a ? (a.place||"") : "";
+  $("fDocs").value = a ? (a.docs||[]).map(d=>d.text).join("\n") : "";
+  $("fNotes").value = a ? (a.notes||"") : "";
+  $("fErr").textContent = ""; updatePlaceLabel();
+  $("detSheet").classList.remove("open"); $("formSheet").classList.add("open");
+}
+function updatePlaceLabel(){
+  const tel = document.querySelector("input[name=fMode]:checked").value === "telefono";
+  $("fPlaceLbl").textContent = tel ? "Centro (opcional)" : "Hospital o ambulatorio";
+}
+document.querySelectorAll("input[name=fMode]").forEach(r=>r.onchange=updatePlaceLabel);
+$("quick").onclick = (e) => {
+  const b = e.target.closest("button"); if (!b) return;
+  const lines = $("fDocs").value.split("\n").map(s=>s.trim()).filter(Boolean);
+  if (!lines.includes(b.textContent)) lines.push(b.textContent);
+  $("fDocs").value = lines.join("\n");
+};
+$("fCancel").onclick = () => $("formSheet").classList.remove("open");
+$("fab").onclick = () => openForm(null);
+$("form").onsubmit = async (e) => {
+  e.preventDefault();
+  const date = $("fDate").value, time = $("fTime").value, specialty = $("fSpec").value.trim();
+  const mode = document.querySelector("input[name=fMode]:checked").value, place = $("fPlace").value.trim();
+  if (!date){ $("fErr").textContent = "Elige la fecha."; return; }
+  if (!time){ $("fErr").textContent = "Elige la hora."; return; }
+  if (!specialty){ $("fErr").textContent = "Escribe la especialidad o el motivo."; return; }
+  if (mode === "presencial" && !place){ $("fErr").textContent = "Escribe el hospital o ambulatorio."; return; }
+  const old = editingId ? appts.find(x=>x.id===editingId) : null;
+  const docs = $("fDocs").value.split("\n").map(s=>s.trim()).filter(Boolean).slice(0,15)
+    .map(t=>({text:t.slice(0,80), ready: !!(old && (old.docs||[]).find(d=>d.text===t && d.ready))}));
+  const data = {date, time, specialty, doctor:$("fDoctor").value.trim(), mode, place, docs, notes:$("fNotes").value.trim()};
+  if (old){
+    // Si cambia la fecha u hora, se vuelven a programar los avisos
+    if (old.date !== date || old.time !== time){ const n = await dbGet("notified",{}); delete n[old.id+":eve"]; delete n[old.id+":day"]; await dbSet("notified", n); }
+    Object.assign(old, data);
+  } else appts.push({id:uid(), ...data});
+  await dbSet("appts", appts); $("formSheet").classList.remove("open"); render(); toast("Cita guardada");
+  if (apptDate(data) < new Date()) toast("Guardada (la fecha ya ha pasado)");
+};
+
+// ---------- Clics generales ----------
+document.body.addEventListener("click", async (e) => {
+  const t = e.target.closest("[data-open],[data-doc],[data-edit],[data-del],[data-close],[data-perm]");
+  if (!t) return;
+  if (t.dataset.open) openDetail(t.dataset.open);
+  else if (t.dataset.doc){
+    const [id,i] = t.dataset.doc.split(":"); const a = appts.find(x=>x.id===id);
+    a.docs[+i].ready = !a.docs[+i].ready; await dbSet("appts", appts); render();
+    if ($("detSheet").classList.contains("open")) openDetail(id);
+  }
+  else if (t.dataset.edit) openForm(appts.find(x=>x.id===t.dataset.edit));
+  else if (t.dataset.del){
+    const a = appts.find(x=>x.id===t.dataset.del);
+    if (await ask(`¿Borrar la cita de ${a.specialty} del ${fmtLong(a).toLowerCase()}?`)){
+      appts = appts.filter(x=>x.id!==a.id); await dbSet("appts", appts); $("detSheet").classList.remove("open"); render(); toast("Cita borrada");
+    }
+  }
+  else if (t.dataset.close) $("detSheet").classList.remove("open");
+  else if (t.dataset.perm) askPermission();
+});
+document.querySelectorAll(".sheet-bg").forEach(bg => bg.addEventListener("click", (e) => { if (e.target === bg && bg.id !== "askSheet") bg.classList.remove("open"); }));
+
+$("eveTime").onchange = async () => { if (!$("eveTime").value) return; settings.eveTime = $("eveTime").value; await dbSet("settings", settings); toast("Guardado"); };
+$("hoursBefore").onchange = async () => { settings.hoursBefore = +$("hoursBefore").value; await dbSet("settings", settings); toast("Guardado"); };
+
+// ---------- Copia de seguridad ----------
+$("btnExport").onclick = async () => {
+  const txt = JSON.stringify({app:"mis-citas", v:1, appts, settings});
+  try { await navigator.clipboard.writeText(txt); toast("Copia copiada al portapapeles"); }
+  catch(e){ $("importTxt").value = txt; $("importTxt").select(); toast("Selecciona y copia el texto"); }
+};
+$("btnImport").onclick = async () => {
+  let d; try { d = JSON.parse($("importTxt").value); } catch(e){ toast("El texto no es una copia válida"); return; }
+  if (!d || d.app !== "mis-citas" || !Array.isArray(d.appts)){ toast("El texto no es una copia válida"); return; }
+  if (!(await ask("¿Sustituir tus citas actuales por las de la copia?"))) return;
+  appts = d.appts.filter(a=>a && /^\d{4}-\d{2}-\d{2}$/.test(a.date) && /^\d{2}:\d{2}$/.test(a.time) && a.specialty).map(a=>({
+    id:a.id||uid(), date:a.date, time:a.time, specialty:String(a.specialty).slice(0,50), doctor:a.doctor||"", mode:a.mode==="telefono"?"telefono":"presencial",
+    place:a.place||"", notes:a.notes||"", docs:(a.docs||[]).filter(x=>x&&x.text).map(x=>({text:String(x.text).slice(0,80), ready:!!x.ready}))}));
+  if (d.settings) settings = {...DEFAULT_SETTINGS, ...d.settings};
+  await dbSet("appts", appts); await dbSet("settings", settings); $("importTxt").value = ""; render(); toast("Citas restauradas");
+};
+
+// ---------- Avisos ----------
+async function askPermission(){
+  const p = await Notification.requestPermission();
+  if (p === "granted"){ await setupBackground(); await checkDue(); toast("Avisos activados"); }
+  render();
+}
+async function setupBackground(){
+  if (!swReg || !("periodicSync" in swReg)) return;
+  try {
+    const st = await navigator.permissions.query({name:"periodic-background-sync"});
+    if (st.state === "granted") await swReg.periodicSync.register("check-citas", {minInterval: 60*60*1000});
+  } catch(e){}
+}
+async function checkDue(){ if (swReg){ try { await notifyDueIfNeeded(swReg); } catch(e){} } }
+
+// ---------- Inicio ----------
+(async function init(){
+  try { [appts, settings] = await Promise.all([dbGet("appts",[]), dbGet("settings",{...DEFAULT_SETTINGS})]); } catch(e){}
+  render();
+  if ("serviceWorker" in navigator){
+    try { await navigator.serviceWorker.register("sw.js"); swReg = await navigator.serviceWorker.ready; } catch(e){}
+  }
+  if ("Notification" in window && Notification.permission === "granted"){ await setupBackground(); await checkDue(); }
+  setInterval(() => { if (!document.querySelector(".sheet-bg.open")) render(); checkDue(); }, 60000);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden){ render(); checkDue(); } });
+})();
+</script>
+</body>
+</html>
